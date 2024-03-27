@@ -34,7 +34,7 @@ body, html
 .input_outline
    border: 2px solid #f0f01c
    transition: .2s all ease
-   border-radius: 20px
+   border-radius: 100px
 
    &:hover 
 
@@ -44,25 +44,26 @@ body, html
     margin: 3px
     padding: 1rem
     min-width: 250px
-    background: #f0f01c
-    color: #131314
-    border-radius: 15px
+    background: transparent
+    color: #f0f01c
+    border-radius: 100px
     outline: none
     text-align: center
     position: relative
-    transition: .2s all ease
+    transition: .3s all ease
 
     &:focus
-        background: transparent 
-        color: #f0f01c
+        background: #f0f01c
+        color: #131314
             
         &::placeholder
-            color: #f0f01c
+            color: #131314
 
 
 
     &::placeholder
-        color: #131314
+        color: #f0f01c
+        opacity: .7
         font-size: 12px
 
                     

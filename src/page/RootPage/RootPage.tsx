@@ -66,7 +66,7 @@ const RootPage = () => {
                                     <p className={s.P1} style={{
                                         transform: `translateX(${window.innerHeight}px)`,
                                     }}>
-                                        <div className="input_outline"><input className="input" onChange={(e) => setPnm(e.target.value)} placeholder="Phone Number"/></div>
+                                        <div className="input_outline"><input className="input" onChange={(e) => setPnm(e.target.value)} placeholder="Enter Phone Number"/></div>
                                     </p>
                                     <p className={s.P2} style={{
                                         transform: `translateX(${window.innerHeight}px)`,
@@ -106,7 +106,7 @@ const RootPage = () => {
                                             <button onClick={() => setUpdateState(1)} className={s.NextBtn}>Go Back →</button>
                                         </div>
                                         <div className={s.S2Content}>
-                                            <div className="input_outline"><input className="input" onChange={(e) => setPnm(e.target.value)} placeholder="Code"/></div>
+                                            <div className="input_outline"><input className="input" onChange={(e) => setPnm(e.target.value)} placeholder="Enter Verification Code"/></div>
                                         </div>
                                     </div>
                                 </div>
