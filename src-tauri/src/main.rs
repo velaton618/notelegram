@@ -1,15 +1,66 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+use std::env;
+
+use helpers::telegram::Telegram;
+use lazy_static::lazy_static;
+use log::error;
+use tokio::sync::Mutex;
+
+mod helpers;
+
+lazy_static! {
+    pub static ref TELEGRAM: Mutex<Option<Telegram>> = Mutex::new(None);
 }
 
-fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+async fn initialize() {
+    dotenv::dotenv().ok();
+    env::set_var("RUST_LOG", "error");
+
+    pretty_env_logger::init();
+
+    let mut telegram = TELEGRAM.lock().await;
+    *telegram = Some(
+        Telegram::new(
+            env
+                ::var("API_ID")
+                .map_err(|err| {
+                    error!("Failed to get API_ID: {}", err);
+                })
+                .unwrap()
+                .parse()
+                .unwrap(),
+            env
+                ::var("API_HASH")
+                .map_err(|err| {
+                    error!("Failed to get API_HASH: {}", err);
+                })
+                .unwrap()
+                .to_string()
+        ).await
+    );
+
+    // let api_id = env::var("APP_ID").unwrap().parse().unwrap();
+    // let api_hash = env::var("APP_HASH").unwrap().to_string();
+
+    // let mut client = CLIENT.lock().await;
+    // *client = Some(
+    //     Client::connect(Config {
+    //         session: Session::load_file_or_create("omegram.session").unwrap(),
+    //         api_id,
+    //         api_hash: api_hash.clone(),
+    //         params: Default::default(),
+    //     }).await.unwrap()
+    // );
+}
+
+#[tokio::main]
+async fn main() {
+    initialize().await;
+
+    tauri::Builder
+        ::default()
+        .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
