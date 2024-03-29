@@ -32,6 +32,7 @@ grammers-tl-types = { git = "https://github.com/Lonami/grammers" }
 # --- ENV ---
 dotenv = "0.15.0"
 lazy_static = "1.4.0"
+base64-url = "2.0.2"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

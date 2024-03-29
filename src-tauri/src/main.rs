@@ -62,7 +62,12 @@ async fn main() {
     tauri::Builder
         ::default()
         .invoke_handler(
-            tauri::generate_handler![commands::sign::request_code, commands::sign::sign_in]
+            tauri::generate_handler![
+                commands::sign::request_code,
+                commands::sign::request_qrcode,
+                commands::sign::sign_in,
+                commands::sign::get_update
+            ]
         )
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

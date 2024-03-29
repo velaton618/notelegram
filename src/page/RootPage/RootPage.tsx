@@ -3,8 +3,8 @@ import { invoke } from "@tauri-apps/api"
 import SlideContainer from "../../component/SlideContainer/SlideContainer"
 import s from "../../component/SlideSegment/SlideSegment.module.sass"
 import qr from "../../resource/qs.png"
-import { useState } from "react"
-
+import { useEffect, useState } from "react"
+import QRCode from "react-qr-code";
 
 const RootPage = () => {
 
@@ -12,7 +12,15 @@ const RootPage = () => {
     const [phone, setPhone] = useState<string>("")
     const [code, setCode] = useState<string>("")
     const [bozo, setBozo] = useState<number>(0);
+    const [qr, setQr] = useState<string>("");
 
+    useEffect(() => {
+        async function getQr() {
+            setQr(await invoke("request_qrcode"));
+        }
+
+        getQr();
+    }, []);
     return (
         <div>
             <SlideContainer
@@ -42,11 +50,16 @@ const RootPage = () => {
                                         }}>Log in by Phone Number →</button>
                                     </div>
                                 </div>
+                                <button onClick={async () => {
+                                    setBozo(await invoke("get_update"));
+                                    setUpdateState(3);
+                                }} className={s.NextBtn}>Accept</button>
                                 <div className={s.ImgContainer}>
                                     <div className={s.ImageWrap}>
-                                        <img src={qr} alt="" draggable="false" className={s.IMG} />
+                                        <QRCode style={{ border: "4px solid #ff0000" }} value={qr} />
                                     </div>
                                 </div>
+
                             </div>,
                             transform: `-${window.innerWidth}px`
                         },
@@ -75,7 +88,7 @@ const RootPage = () => {
                                         transform: `translateX(${window.innerHeight}px)`,
                                     }}>
                                         <button onClick={async () => {
-                                            await invoke("request_code", { phone: phone })
+                                            setQr(await invoke("request_code", { phone: phone }));
                                             setUpdateState(2)
                                         }} className={s.NextBtn}>← Confirm login</button>
                                     </p>

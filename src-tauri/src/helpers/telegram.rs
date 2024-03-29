@@ -2,6 +2,7 @@ use std::env;
 
 use grammers_client::{ types::LoginToken, Client, Config, InitParams };
 use grammers_session::Session;
+use grammers_tl_types as tl;
 
 pub struct Telegram {
     pub client: Client,
@@ -21,6 +22,41 @@ impl Telegram {
             client: client,
             token: None,
         }
+    }
+
+    pub async fn export_qrtoken(&mut self) -> grammers_tl_types::enums::auth::LoginToken {
+        let request = tl::functions::auth::ExportLoginToken {
+            api_id: env::var("API_ID").unwrap().parse().unwrap(),
+            api_hash: env::var("API_HASH").unwrap(),
+            except_ids: vec![],
+        };
+
+        let s = self.client.invoke(&request).await.unwrap();
+
+        return s;
+    }
+
+    pub async fn get_update(&self) -> usize {
+        let request = tl::functions::auth::ExportLoginToken {
+            api_id: env::var("API_ID").unwrap().parse().unwrap(),
+            api_hash: env::var("API_HASH").unwrap(),
+            except_ids: vec![],
+        };
+
+        let s = self.client.invoke(&request).await.unwrap();
+        println!("{:#?}", s);
+        if format!("{:#?}", s).contains("Succ") {
+            println!("Success");
+
+            match self.client.session().save_to_file("notelegram.session") {
+                Ok(_) => {}
+                Err(_e) => {}
+            }
+
+            let mut dialogs = self.client.iter_dialogs();
+            return dialogs.total().await.unwrap();
+        }
+        0
     }
 
     pub async fn request_code(&mut self, phone: &str) {
