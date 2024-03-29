@@ -8,6 +8,7 @@ use log::error;
 use tokio::sync::Mutex;
 
 mod helpers;
+mod commands;
 
 lazy_static! {
     pub static ref TELEGRAM: Mutex<Option<Telegram>> = Mutex::new(None);
@@ -40,8 +41,8 @@ async fn initialize() {
         ).await
     );
 
-    // let api_id = env::var("APP_ID").unwrap().parse().unwrap();
-    // let api_hash = env::var("APP_HASH").unwrap().to_string();
+    // let api_id = env::var("API_ID").unwrap().parse().unwrap();
+    // let api_hash = env::var("API_HASH").unwrap().to_string();
 
     // let mut client = CLIENT.lock().await;
     // *client = Some(
@@ -60,7 +61,9 @@ async fn main() {
 
     tauri::Builder
         ::default()
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(
+            tauri::generate_handler![commands::sign::request_code, commands::sign::sign_in]
+        )
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

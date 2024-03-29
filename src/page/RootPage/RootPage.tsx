@@ -1,4 +1,5 @@
 
+import { invoke } from "@tauri-apps/api"
 import SlideContainer from "../../component/SlideContainer/SlideContainer"
 import s from "../../component/SlideSegment/SlideSegment.module.sass"
 import qr from "../../resource/qs.png"
@@ -10,6 +11,7 @@ const RootPage = () => {
     const [updateState, setUpdateState] = useState<number>(0)
     const [phone, setPhone] = useState<string>("")
     const [code, setCode] = useState<string>("")
+    const [bozo, setBozo] = useState<number>(0);
 
     return (
         <div>
@@ -72,7 +74,10 @@ const RootPage = () => {
                                     <p className={s.P2} style={{
                                         transform: `translateX(${window.innerHeight}px)`,
                                     }}>
-                                        <button onClick={() => setUpdateState(2)} className={s.NextBtn}>← Confirm login</button>
+                                        <button onClick={async () => {
+                                            await invoke("request_code", { phone: phone })
+                                            setUpdateState(2)
+                                        }} className={s.NextBtn}>← Confirm login</button>
                                     </p>
                                 </div>
                             </div>,
@@ -112,7 +117,10 @@ const RootPage = () => {
                                         </div>
 
                                         <div className={s.S2GB}>
-                                            <button onClick={() => setUpdateState(3)} className={s.NextBtn}>LogBozo</button>
+                                            <button onClick={async () => {
+                                                setBozo(await invoke("sign_in", { code: code }));
+                                                setUpdateState(3)
+                                            }} className={s.NextBtn}>LogBozo</button>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +134,7 @@ const RootPage = () => {
                                         transform: `translateX(-${window.innerHeight}px)`,
                                     }}>
                                         <div className={s.S1Text}>
-                                            Hi <b>bozo</b>, you are logged in :)
+                                            Hi <b>bozo {bozo}</b>, you are logged in :)
                                         </div>
                                     </div>
                                 </div>
